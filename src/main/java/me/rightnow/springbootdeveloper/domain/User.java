@@ -25,13 +25,18 @@ public class User implements UserDetails { // userdetails 상속받아 인증 �
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
+    @Column(name = "nickname", unique = true)
+    private String nickname; // 사용자 이름
+
     @Column(name = "password")
     private String password;
 
+    // 생성자에 nickname 추가
     @Builder
-    public User(String email, String password, String auth) {
+    public User(String email, String password, String nickname) {
         this.email = email;
         this.password = password;
+        this.nickname = nickname;
     }
 
     @Override // 권한 반환
@@ -71,5 +76,11 @@ public class User implements UserDetails { // userdetails 상속받아 인증 �
     public boolean isEnabled() {
         // 계정 사용 가능한지 확인하는 로직
         return true; // true는 사용 가능함을 뜻함
+    }
+
+    //사용자 이름 변경
+    public User update(String nickname) {
+        this.nickname = nickname;
+        return this;
     }
 }
