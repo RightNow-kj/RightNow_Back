@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
-public class User implements UserDetails {
+public class User implements UserDetails { // userdetails 상속받아 인증 객체로 사용
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false)
@@ -34,37 +34,42 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    @Override
+    @Override // 권한 반환
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("user"));
     }
 
-    @Override
+    @Override // 사용자 id 반환(고유값)
     public String getUsername() {
         return email;
     }
 
-    @Override
+    @Override // 사용자 패스워드 반환
     public String getPassword() {
-        return password;
+        // 만료됐는지 확인하는 로직
+        return password; // true 는 만료되지 않음 을 뜻함
     }
-    @Override
+    @Override // 계정 만료 여부 반환
     public boolean isAccountNonExpired() {
-        return true;
+        // 계정 잠금됐는지 확인하는 로직
+        return true; // true 는 잠금되지 않음을 뜻함
     }
 
-    @Override
+    @Override // 계정 잠금 여부 반환
     public boolean isAccountNonLocked() {
-        return true;
+        // 패스워드가 만료됐는지 확인하는 로직
+        return true; // true 는 만료되지 않았음을 뜻함
     }
 
-    @Override
+    @Override //패스워드 만료 여부 반환
     public boolean isCredentialsNonExpired() {
-        return true;
+        // 패스워드가 만료됐는지 확인하는 로직
+        return true; // true 는 만료되지 않았음을 뜻함
     }
 
-    @Override
+    @Override // 계정 사용가능 여부 반환
     public boolean isEnabled() {
-        return true;
+        // 계정 사용 가능한지 확인하는 로직
+        return true; // true는 사용 가능함을 뜻함
     }
 }
