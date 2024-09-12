@@ -76,11 +76,14 @@ public class User implements UserDetails { // userdetails 상속받아 인증 �
     public boolean isEnabled() {
         // 계정 사용 가능한지 확인하는 로직
         return true; // true는 사용 가능함을 뜻함
+<<<<<<< chaerin
     }
 
     // 사용자 이름 변경
     public User update(String nickname) {
         this.nickname = nickname;
         return this;
+=======
+>>>>>>> main
     }
 }
