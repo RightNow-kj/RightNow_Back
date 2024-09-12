@@ -12,13 +12,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-// users 테이블과 연결되는 엔티티 클래스임을 나타냄
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter  // 클래스의 모든 필드에 대해 getter 메서드를 자동으로 생성
-@Entity  // 클래스가 JPA 엔티티임을 나타냄
-// UserDetail를 상속받아 인증 객체로 사용
-public class User implements UserDetails {
+@Getter
+@Entity
+public class User implements UserDetails { // userdetails 상속받아 인증 객체로 사용
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", updatable = false)
@@ -27,13 +25,18 @@ public class User implements UserDetails {
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
+    // 사용자 이름
+    @Column(name = "nickname", unique = true)
+    private String nickname;
+
     @Column(name = "password")
     private String password;
 
     @Builder
-    public User(String email, String password, String auth) {
+    public User(String email, String password, String nickname) {
         this.email = email;
         this.password = password;
+        this.nickname = nickname;
     }
 
     @Override // 권한 반환
@@ -41,39 +44,43 @@ public class User implements UserDetails {
         return List.of(new SimpleGrantedAuthority("user"));
     }
 
-    // 사용자의 id를 반환(고유한 값)
-    @Override
+    @Override // 사용자 id 반환(고유값)
     public String getUsername() {
         return email;
     }
 
-    // 사용자의 패스워드 반환
-    @Override
+    @Override // 사용자 패스워드 반환
     public String getPassword() {
-        return password;
+        // 만료됐는지 확인하는 로직
+        return password; // true 는 만료되지 않음 을 뜻함
     }
-
-    // 계정 만료 여부 반환
-    @Override
+    @Override // 계정 만료 여부 반환
     public boolean isAccountNonExpired() {
-        return true; // true -> 만료되지 않음
+        // 계정 잠금됐는지 확인하는 로직
+        return true; // true 는 잠금되지 않음을 뜻함
     }
 
-    // 계정 잠금 여부 반환
-    @Override
+    @Override // 계정 잠금 여부 반환
     public boolean isAccountNonLocked() {
-        return true; // true -> 잠금되지 않음
+        // 패스워드가 만료됐는지 확인하는 로직
+        return true; // true 는 만료되지 않았음을 뜻함
     }
 
-    // 패스워드의 만료 여부 반환
-    @Override
+    @Override //패스워드 만료 여부 반환
     public boolean isCredentialsNonExpired() {
-        return true; // true -> 만료되지 않음
+        // 패스워드가 만료됐는지 확인하는 로직
+        return true; // true 는 만료되지 않았음을 뜻함
     }
 
-    // 계정 사용 가능 여부 반환
-    @Override
+    @Override // 계정 사용가능 여부 반환
     public boolean isEnabled() {
-        return true; // true -> 사용 가능
+        // 계정 사용 가능한지 확인하는 로직
+        return true; // true는 사용 가능함을 뜻함
+    }
+
+    // 사용자 이름 변경
+    public User update(String nickname) {
+        this.nickname = nickname;
+        return this;
     }
 }
